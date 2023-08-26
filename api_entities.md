@@ -181,8 +181,7 @@ LEFT join dds.dm_couriers dc on fd.courier_id = dc.courier_id
 left join over_count oc on fd.courier_id = oc.courier_id and fd.order_ts = oc.order_ts  
 left join order_sum2 os2 on fd.courier_id = os2.courier_id and fd.order_ts = os2.order_ts  
 group by dc.courier_id, dc.courier_name, fd.order_ts, oc.orders_count, oc.orders_total_sum, oc.rate_avg,
-		os2.courier_order_sum, oc.courier_tips_sum  
-;
+os2.courier_order_sum, oc.courier_tips_sum;  
  
 
 
