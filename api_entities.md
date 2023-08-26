@@ -25,7 +25,7 @@
 	
 Так, как таблица находится в CDM-слое, данные в неё будут загружаться из двух таблиц в DDS-слое (имя курьера из **dm_couriers** и данные о доставке из **fct_deliveries**), а сами эти две таблицы будут набирать данные из STG-слоя. 
 
-**DDL таблицы cdm.dm_courier_ledger:**
+    **DDL таблицы cdm.dm_courier_ledger:**
 	
 CREATE TABLE if not exists cdm.dm_courier_ledger (  
 id serial NOT NULL,  
@@ -53,17 +53,17 @@ courier_name varchar NOT NULL,
    CONSTRAINT unique_dm_courier_ledger UNIQUE (courier_id, settlement_year, settlement_month)  
 );  
 
-	DDL таблицы dds.dm_couriers:
+	**DDL таблицы dds.dm_couriers:**
 		
-CREATE TABLE dds.dm_couriers (
-	id int4 NOT NULL GENERATED ALWAYS AS IDENTITY( INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE),
-	courier_id varchar NOT NULL,
-	courier_name varchar NOT NULL,
-	active_from timestamp NOT null,
-	active_to timestamp NOT null,
-	CONSTRAINT dm_couriers_courier_id_key UNIQUE (courier_id),
-	CONSTRAINT dm_couriers_pkey PRIMARY KEY (id)
-);
+CREATE TABLE dds.dm_couriers (  
+   id int4 NOT NULL GENERATED ALWAYS AS IDENTITY( INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE),  
+   courier_id varchar NOT NULL,  
+   courier_name varchar NOT NULL,  
+   active_from timestamp NOT null,  
+   active_to timestamp NOT null,  
+   CONSTRAINT dm_couriers_courier_id_key UNIQUE (courier_id),  
+   CONSTRAINT dm_couriers_pkey PRIMARY KEY (id)  
+);  
 
     DDL таблицы dds.fct_deliveries:
 
