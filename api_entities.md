@@ -27,11 +27,11 @@
 
 **DDL таблицы cdm.dm_courier_ledger:**
 	
-CREATE TABLE if not exists cdm.dm_courier_ledger (
-id serial NOT NULL,
-courier_id varchar NOT null,
-courier_name varchar NOT NULL,
-   settlement_year int4 NOT NULL,
+CREATE TABLE if not exists cdm.dm_courier_ledger (  
+id serial NOT NULL,  
+courier_id varchar NOT null,  
+courier_name varchar NOT NULL,  
+   settlement_year int4 NOT NULL,  
    settlement_month int4 NOT NULL,
    orders_count int4 NOT NULL,
    orders_total_sum numeric(19, 5) NOT NULL,
