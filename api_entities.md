@@ -25,7 +25,7 @@
 	
 Так, как таблица находится в CDM-слое, данные в неё будут загружаться из двух таблиц в DDS-слое (имя курьера из **dm_couriers** и данные о доставке из **fct_deliveries**), а сами эти две таблицы будут набирать данные из STG-слоя. 
 
-    **DDL таблицы cdm.dm_courier_ledger:**
+    DDL таблицы cdm.dm_courier_ledger:
 	
 CREATE TABLE if not exists cdm.dm_courier_ledger (  
 id serial NOT NULL,  
@@ -53,7 +53,7 @@ courier_name varchar NOT NULL,
    CONSTRAINT unique_dm_courier_ledger UNIQUE (courier_id, settlement_year, settlement_month)  
 );  
 
-	**DDL таблицы dds.dm_couriers:**
+	DDL таблицы dds.dm_couriers:
 		
 CREATE TABLE dds.dm_couriers (  
    id int4 NOT NULL GENERATED ALWAYS AS IDENTITY( INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE),  
@@ -65,41 +65,41 @@ CREATE TABLE dds.dm_couriers (
    CONSTRAINT dm_couriers_pkey PRIMARY KEY (id)  
 );  
 
-    DDL таблицы dds.fct_deliveries:
+        DDL таблицы dds.fct_deliveries:
 
-CREATE TABLE dds.fct_deliveries (
-	id int4 NOT NULL GENERATED ALWAYS AS IDENTITY( INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE),
-	delivery_id varchar NOT NULL,
-	courier_id int4 NOT NULL,
-	order_id varchar NOT NULL,
-	delivery_ts timestamp not null,
-	rate int4 NOT NULL,
-	sum numeric(19, 5) NOT NULL DEFAULT 0,
-	tip_sum numeric(19, 5) NOT NULL DEFAULT 0,
-	CONSTRAINT fct_deliveries_delivery_id_key UNIQUE (delivery_id),
-	CONSTRAINT fct_deliveries_pkey PRIMARY KEY (id),
-	CONSTRAINT fct_deliveries_rate_check CHECK ((rate > 0))
-);
+CREATE TABLE dds.fct_deliveries (  
+   id int4 NOT NULL GENERATED ALWAYS AS IDENTITY( INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE),  
+   delivery_id varchar NOT NULL,  
+   courier_id int4 NOT NULL,  
+   order_id varchar NOT NULL,  
+   delivery_ts timestamp not null,  
+   rate int4 NOT NULL,  
+   sum numeric(19, 5) NOT NULL DEFAULT 0,  
+   tip_sum numeric(19, 5) NOT NULL DEFAULT 0,  
+   CONSTRAINT fct_deliveries_delivery_id_key UNIQUE (delivery_id),  
+   CONSTRAINT fct_deliveries_pkey PRIMARY KEY (id),  
+   CONSTRAINT fct_deliveries_rate_check CHECK ((rate > 0))  
+);  
 
 
-    DDL таблицы stg.couriers:
+        DDL таблицы stg.couriers:
 	
-CREATE TABLE stg.couriers (
-	id serial4 NOT NULL,
-	object_value text NOT NULL,
-	update_ts timestamp NOT NULL,
-	CONSTRAINT couriers_pkey PRIMARY KEY (id)
-);
+CREATE TABLE stg.couriers (  
+   id serial4 NOT NULL,  
+   object_value text NOT NULL,  
+   update_ts timestamp NOT NULL,  
+   CONSTRAINT couriers_pkey PRIMARY KEY (id)  
+);  
 
 
-    DDL таблицы stg.delivery:
+       DDL таблицы stg.delivery:
 	
-CREATE TABLE stg.delivery (
-  id serial4 NOT NULL,
-  object_value text NOT NULL,
-  update_ts timestamp NOT NULL,
-  CONSTRAINT delivery_pkey PRIMARY KEY (id)
-);
+CREATE TABLE stg.delivery (  
+  id serial4 NOT NULL,  
+  object_value text NOT NULL,  
+  update_ts timestamp NOT NULL,  
+  CONSTRAINT delivery_pkey PRIMARY KEY (id)  
+);  
 
 
 Для реализации финального расчёт с курьерами мы будем использовать следующую структуру запроса внесения изменения в таблицу cdm.dm_courier_ledger:
