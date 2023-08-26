@@ -131,57 +131,57 @@ sum(s.bonus_grant) as orders_bonus_granted_sum,
                             order_processing_fee = EXCLUDED.order_processing_fee,  
                             restaurant_reward_sum = EXCLUDED.restaurant_reward_sum;  
 
-DELETE FROM cdm.dm_courier_ledger;
+DELETE FROM cdm.dm_courier_ledger;  
 
-WITH over_count AS(
-select
-	order_ts,
-	courier_id, 
-	count(*) over (partition by courier_id) as orders_count,
-	sum(sum) over (partition by courier_id) as orders_total_sum,
-	avg(rate) over (partition by courier_id) as rate_avg,
-	sum(tip_sum) over (partition by courier_id) as courier_tips_sum
-from dds.fct_deliveries
-), order_sum as 
-(
-select order_ts,
-	courier_id,
-	CASE 
-		WHEN rate_avg < 4 THEN (orders_total_sum * 0.05)
-		WHEN 4 <= rate_avg and rate_avg < 4.5 THEN (orders_total_sum * 0.07)
-		WHEN 4.5 <= rate_avg and rate_avg < 4.9 THEN (orders_total_sum * 0.08)
-		WHEN 4.9 < rate_avg THEN (orders_total_sum * 0.1)
-	end courier_order
-from over_count
-), order_sum2 as 
-(
-select order_ts,
-	courier_id,
-	CASE 
-		WHEN courier_order < 100 THEN 100
-		else courier_order
-	end courier_order_sum
-from order_sum
-)
-insert into cdm.dm_courier_ledger(courier_id,courier_name,settlement_year,settlement_month,orders_count,orders_total_sum,rate_avg,order_processing_fee,courier_order_sum,courier_tips_sum,courier_reward_sum)
-select distinct
-	dc.courier_id,
-	dc.courier_name,
-	EXTRACT(YEAR FROM fd.order_ts) settlement_year,
-	EXTRACT(month FROM fd.order_ts) settlement_month,
-	oc.orders_count,
-	oc.orders_total_sum,
-	oc.rate_avg,
-	(oc.orders_total_sum * 0.25) order_processing_fee,
-	os2.courier_order_sum,
-	oc.courier_tips_sum,
-	((os2.courier_order_sum + oc.courier_tips_sum)*0.95) courier_reward_sum
-from dds.fct_deliveries fd
-LEFT join dds.dm_couriers dc on fd.courier_id = dc.courier_id
-left join over_count oc on fd.courier_id = oc.courier_id and fd.order_ts = oc.order_ts
-left join order_sum2 os2 on fd.courier_id = os2.courier_id and fd.order_ts = os2.order_ts
+WITH over_count AS(  
+select  
+	order_ts,  
+	courier_id,   
+	count(*) over (partition by courier_id) as orders_count,  
+	sum(sum) over (partition by courier_id) as orders_total_sum,  
+	avg(rate) over (partition by courier_id) as rate_avg,  
+	sum(tip_sum) over (partition by courier_id) as courier_tips_sum  
+from dds.fct_deliveries  
+), order_sum as   
+(  
+select order_ts,  
+	courier_id,  
+	CASE   
+		WHEN rate_avg < 4 THEN (orders_total_sum * 0.05)  
+		WHEN 4 <= rate_avg and rate_avg < 4.5 THEN (orders_total_sum * 0.07)  
+		WHEN 4.5 <= rate_avg and rate_avg < 4.9 THEN (orders_total_sum * 0.08)  
+		WHEN 4.9 < rate_avg THEN (orders_total_sum * 0.1)  
+	end courier_order  
+from over_count  
+), order_sum2 as   
+(  
+select order_ts,  
+	courier_id,  
+	CASE   
+		WHEN courier_order < 100 THEN 100  
+		else courier_order  
+	end courier_order_sum  
+from order_sum  
+)  
+insert into   cdm.dm_courier_ledger(courier_id,courier_name,settlement_year,settlement_month,orders_count,orders_total_sum,rate_avg,order_processing_fee,courier_order_sum,courier_tips_sum,courier_reward_sum)  
+select distinct  
+	dc.courier_id,  
+	dc.courier_name,  
+	EXTRACT(YEAR FROM fd.order_ts) settlement_year,  
+	EXTRACT(month FROM fd.order_ts) settlement_month,  
+	oc.orders_count,  
+	oc.orders_total_sum,  
+	oc.rate_avg,  
+	(oc.orders_total_sum * 0.25) order_processing_fee,  
+	os2.courier_order_sum,  
+	oc.courier_tips_sum,  
+	((os2.courier_order_sum + oc.courier_tips_sum)*0.95) courier_reward_sum  
+from dds.fct_deliveries fd  
+LEFT join dds.dm_couriers dc on fd.courier_id = dc.courier_id  
+left join over_count oc on fd.courier_id = oc.courier_id and fd.order_ts = oc.order_ts  
+left join order_sum2 os2 on fd.courier_id = os2.courier_id and fd.order_ts = os2.order_ts  
 group by dc.courier_id, dc.courier_name, fd.order_ts, oc.orders_count, oc.orders_total_sum, oc.rate_avg,
-		os2.courier_order_sum, oc.courier_tips_sum
+		os2.courier_order_sum, oc.courier_tips_sum  
 ;
  
 
