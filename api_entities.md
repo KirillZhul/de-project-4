@@ -104,14 +104,15 @@ CREATE TABLE stg.delivery (
 
 Для реализации финального расчёт с курьерами мы будем использовать следующую структуру запроса внесения изменения в таблицу cdm.dm_courier_ledger:
 
-insert into cdm.dm_settlement_report (restaurant_id, restaurant_name, settlement_date, orders_count, orders_total_sum, orders_bonus_payment_sum,   orders_bonus_granted_sum, order_processing_fee, restaurant_reward_sum)  
-                        select  r.id as restaurant_id,   
-                                r.restaurant_name,   
-                                d.date as settlement_date,   
-                                count(distinct s.order_id) as orders_count,   
-                                sum(s.total_sum) as orders_total_sum,   
-                                sum(s.bonus_payment) as orders_bonus_payment_sum,   
-                                sum(s.bonus_grant) as orders_bonus_granted_sum,   
+insert into cdm.dm_settlement_report (  
+restaurant_id, restaurant_name, settlement_date, orders_count, orders_total_sum, orders_bonus_payment_sum,   orders_bonus_granted_sum,   order_processing_fee, restaurant_reward_sum)    
+select  r.id as restaurant_id,     
+r.restaurant_name,   
+d.date as settlement_date,   
+count(distinct s.order_id) as orders_count,   
+sum(s.total_sum) as orders_total_sum,   
+sum(s.bonus_payment) as orders_bonus_payment_sum,   
+sum(s.bonus_grant) as orders_bonus_granted_sum,   
                                 sum(s.total_sum * 0.25) as order_processing_fee,   
                                 sum(s.total_sum - s.total_sum * 0.25 - s.bonus_payment) as restaurant_reward_sum  
                         from dds.dm_restaurants r   
