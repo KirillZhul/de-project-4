@@ -1,8 +1,8 @@
 import pendulum
 from airflow.decorators import dag, task
 from airflow.models.variable import Variable
-from examples.stg.delivery_system_dag.couriers_saver import CourierClass
-from examples.stg.delivery_system_dag.delivery_saver import DeliveryClass
+from stg.delivery_system_dag.couriers_saver import CourierClass
+from stg.delivery_system_dag.delivery_saver import DeliveryClass
 
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.hooks.http_hook import HttpHook
