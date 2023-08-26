@@ -2,8 +2,8 @@ import pendulum
 import logging
 from airflow.decorators import dag, task
 from airflow.models.variable import Variable
-from examples.dds.deliveries_dds_dag.courier_loader import CourierLoader
-from examples.dds.deliveries_dds_dag.deliveries_loader import DeliveryLoader
+from dds.deliveries_dds_dag.courier_loader import CourierLoader
+from dds.deliveries_dds_dag.deliveries_loader import DeliveryLoader
 
 from lib import ConnectionBuilder
 from airflow.providers.postgres.hooks.postgres import PostgresHook
